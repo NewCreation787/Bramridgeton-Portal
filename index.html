@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Commonwealth of Bramridgeton</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C500;
+    --gold-dark: #C9A000;
+    --gold-light: #FFF3A3;
+    --blue: #1A3A6B;
+    --blue-mid: #2C5FAD;
+    --blue-light: #EAF0FF;
+    --white: #FFFFFF;
+    --off-white: #FAFAFA;
+    --text: #0F1E3C;
+    --text-muted: #5A6880;
+    --border: #D9E2F5;
+    --shadow: 0 4px 24px rgba(26,58,107,0.10);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --gold: #F5C500;
+      --gold-dark: #E0AE00;
+      --gold-light: #3A3000;
+      --blue: #A8C4FF;
+      --blue-mid: #6EA0FF;
+      --blue-light: #0D1E40;
+      --white: #111827;
+      --off-white: #151F35;
+      --text: #E8EEF9;
+      --text-muted: #8A9BC2;
+      --border: #1E2F55;
+      --shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* NAV */
+  nav {
+    background: var(--blue);
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 100;
+    border-bottom: 3px solid var(--gold);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    height: 60px;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .nav-emblem {
+    width: 38px;
+    height: 38px;
+  }
+  .nav-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .nav-title span { display: block; font-size: 0.65rem; color: rgba(255,255,255,0.65); font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 0.04em; }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    list-style: none;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.80);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    padding: 0 0.9rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 8px;
+    background: none;
+    border: none;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 63px;
+    left: 0; right: 0;
+    background: var(--blue);
+    border-bottom: 3px solid var(--gold);
+    z-index: 99;
+    padding: 0.5rem 0 1rem;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a {
+    display: block;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .mobile-menu a:hover { color: var(--gold); border-left-color: var(--gold); background: rgba(255,255,255,0.05); }
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+
+  /* PAGES */
+  .page { display: none; animation: fadeIn 0.25s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--blue) 0%, #0F2550 55%, #1A3A6B 100%);
+    color: var(--white);
+    padding: 4.5rem 1.25rem 3.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, rgba(245,197,0,0.03) 0px, rgba(245,197,0,0.03) 1px, transparent 1px, transparent 60px);
+  }
+  .hero-emblem { width: 90px; height: 90px; margin: 0 auto 1.25rem; position: relative; z-index: 1; }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -0.01em;
+    position: relative; z-index: 1;
+  }
+  .hero-sub {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.4rem;
+    letter-spacing: 0.08em;
+    position: relative; z-index: 1;
+  }
+  .hero-motto {
+    display: inline-block;
+    margin-top: 1.4rem;
+    padding: 0.45rem 1.2rem;
+    border: 1.5px solid rgba(245,197,0,0.4);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    position: relative; z-index: 1;
+  }
+
+  /* CONTENT WRAP */
+  .content { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+  }
+
+  /* CARDS */
+  .cards { display: grid; gap: 1rem; }
+  .cards-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .cards-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+  }
+  .card-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .card-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .card-desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.3rem; }
+  .card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+  /* SECTION BLOCK */
+  .section-block { margin-bottom: 2.5rem; }
+
+  /* ALERT / ANNOUNCEMENT */
+  .announcement {
+    background: var(--gold-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .announcement-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .announcement-text { font-size: 0.88rem; color: var(--text); line-height: 1.55; }
+  .announcement-text strong { color: var(--blue); display: block; margin-bottom: 0.15rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* STAT BAR */
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+  .stat-label { font-size: 0.82rem; color: var(--text-muted); min-width: 110px; }
+  .stat-bar-wrap { flex: 1; background: var(--border); border-radius: 100px; height: 8px; }
+  .stat-bar { height: 8px; border-radius: 100px; background: linear-gradient(to right, var(--blue-mid), var(--gold)); }
+  .stat-num { font-size: 0.82rem; font-weight: 600; color: var(--blue); min-width: 24px; text-align: right; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th {
+    background: var(--blue);
+    color: var(--gold);
+    text-align: left;
+    padding: 0.65rem 1rem;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+  }
+  .data-table td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--blue-light); }
+  .table-wrap { background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .badge-gold { background: var(--gold-light); color: var(--gold-dark); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: #E6F9EE; color: #1A6B3A; }
+
+  /* PERSON CARD */
+  .person-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .person-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue-mid), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .person-name { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+  .person-role { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+  /* PIE LEGEND */
+  .pie-wrap { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+  .pie-legend { display: flex; flex-direction: column; gap: 0.5rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* PARLIAMENT SEATS */
+  .seat-grid { display: flex; flex-wrap: wrap; gap: 6px; padding: 1rem 0; }
+  .seat {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; color: white; font-weight: 700;
+    cursor: default;
+    transition: transform 0.1s;
+  }
+  .seat:hover { transform: scale(1.2); }
+  .seat-commonwealth { background: var(--blue); }
+  .seat-republic { background: #C0392B; }
+  .seat-capitalist { background: #27AE60; }
+
+  /* MILITARY */
+  .military-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .mil-card {
+    background: var(--blue);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 1.4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .mil-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(245,197,0,0.1);
+  }
+  .mil-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .mil-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
+  .mil-label { font-size: 0.8rem; color: rgba(255,255,255,0.75); margin-top: 0.2rem; }
+
+  /* UPDATES FEED */
+  .update-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .update-item:last-child { border-bottom: none; }
+  .update-date {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    min-width: 90px;
+    padding-top: 0.1rem;
+  }
+  .update-content { flex: 1; }
+  .update-title { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 0.2rem; }
+  .update-body { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+  /* FOOTER */
+  footer {
+    background: var(--blue);
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.78rem;
+    border-top: 3px solid var(--gold);
+    margin-top: 2rem;
+  }
+  footer strong { color: var(--gold); }
+
+  /* UTIL */
+  .gap-top { margin-top: 1.5rem; }
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { color: var(--text-muted); }
+  .info-val { font-weight: 600; color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" onclick="showPage('home')">
+      <svg class="nav-emblem" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="#1A3A6B" stroke="#F5C500" stroke-width="2.5"/>
+        <polygon points="30,10 35,25 50,25 38,34 43,50 30,41 17,50 22,34 10,25 25,25" fill="#F5C500"/>
+      </svg>
+      <div class="nav-title">Bramridgeton<span>Commonwealth</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+      <li><a href="#" onclick="showPage('assembly')" id="nav-assembly">Assembly</a></li>
+      <li><a href="#" onclick="showPage('parliament')" id="nav-parliament">Parliament</a></li>
+      <li><a href="#" onclick="showPage('updates')" id="nav-updates">Updates</a></li>
+    </ul>
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="showPage('home');toggleMenu()">🏠 Home</a>
+  <a href="#" onclick="showPage('assembly');toggleMenu()">🛡 Assembly</a>
+  <a href="#" onclick="showPage('parliament');toggleMenu()">🏛 Parliament</a>
+  <a href="#" onclick="showPage('updates');toggleMenu()">📋 Updates</a>
+</div>
+
+<!-- ==================== HOME ==================== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <svg class="hero-emblem" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="47" fill="#1A3A6B" stroke="#F5C500" stroke-width="3"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(245,197,0,0.3)" stroke-width="1"/>
+      <polygon points="50,15 57,38 82,38 62,52 70,76 50,62 30,76 38,52 18,38 43,38" fill="#F5C500"/>
+      <circle cx="50" cy="50" r="6" fill="#1A3A6B" stroke="#F5C500" stroke-width="1.5"/>
+    </svg>
+    <h1>Commonwealth of Bramridgeton</h1>
+    <div class="hero-sub">Official Government Portal</div>
+    <div class="hero-motto">Unity · Order · Progress</div>
+  </div>
+
+  <div class="content">
+    <div class="section-block">
+      <div class="section-title">📢 Notice Board</div>
+      <div class="announcement">
+        <div class="announcement-icon">⭐</div>
+        <div class="announcement-text"><strong>Latest Decree</strong>The Bramridgeton Assembly has completed its Combat Initiative Course. All 10 standing soldiers are now certified. Transport fleet of 2 vehicles operational.</div>
+      </div>
+      <div class="announcement">
+        <div class="announcement-icon">🏛</div>
+        <div class="announcement-text"><strong>Parliamentary Session</strong>The Senate is in session. President JP John presiding. All matters may be directed to the Assembly via official channels.</div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">🌐 Nation Overview</div>
+      <div class="cards cards-3">
+        <div class="card">
+          <div class="card-label">System</div>
+          <div class="card-value">Commonwealth</div>
+          <div class="card-desc">Parliamentary Republic</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Head of State</div>
+          <div class="card-value">JP John</div>
+          <div class="card-desc">President</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Head of Government</div>
+          <div class="card-value">KT Kahel</div>
+          <div class="card-desc">Vice President</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">👥 Leadership</div>
+      <div class="cards cards-2">
+        <div class="person-card">
+          <div class="person-avatar">JP</div>
+          <div>
+            <div class="person-name">John (JP)</div>
+            <div class="person-role">President of Bramridgeton</div>
+          </div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar">KT</div>
+          <div>
+            <div class="person-name">Kahel (KT)</div>
+            <div class="person-role">Vice President of Bramridgeton</div>
+          </div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar">M</div>
+          <div>
+            <div class="person-name">Sen. Meg</div>
+            <div class="person-role">Senator</div>
+          </div>
+        </div>
+        <div class="person-card">
+          <div class="person-avatar">K</div>
+          <div>
+            <div class="person-name">Sen. Ken</div>
+            <div class="person-role">Senator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ASSEMBLY ==================== -->
+<div class="page" id="page-assembly">
+  <div class="hero" style="padding: 2.5rem 1.25rem 2rem;">
+    <h1 style="font-size: clamp(1.3rem,4vw,2rem);">🛡 Bramridgeton Assembly</h1>
+    <div class="hero-sub">Defense & Civil Administration</div>
+  </div>
+
+  <div class="content">
+    <div class="section-block">
+      <div class="section-title">⚔ Military Strength</div>
+      <div class="military-grid">
+        <div class="mil-card">
+          <div class="mil-icon">🪖</div>
+          <div class="mil-num">10</div>
+          <div class="mil-label">Standing Soldiers</div>
+        </div>
+        <div class="mil-card">
+          <div class="mil-icon">🚐</div>
+          <div class="mil-num">2</div>
+          <div class="mil-label">Transport Vehicles</div>
+        </div>
+        <div class="mil-card">
+          <div class="mil-icon">🎯</div>
+          <div class="mil-num">1</div>
+          <div class="mil-label">Combat Initiative Course</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">🏛 Assembly Details</div>
+      <div class="card">
+        <div class="info-row"><span class="info-key">Assembly Capacity</span><span class="info-val">25 Members</span></div>
+        <div class="info-row"><span class="info-key">Active Soldiers</span><span class="info-val">10 / 25 <span class="badge badge-gold">40% Filled</span></span></div>
+        <div class="info-row"><span class="info-key">Combat Training</span><span class="info-val"><span class="badge badge-green">✓ Completed</span></span></div>
+        <div class="info-row"><span class="info-key">Transport Fleet</span><span class="info-val">2 Vehicles <span class="badge badge-blue">Operational</span></span></div>
+        <div class="info-row"><span class="info-key">Combat Initiative Course</span><span class="info-val"><span class="badge badge-green">✓ Certified</span></span></div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">📊 Capacity Overview</div>
+      <div class="card">
+        <div class="stat-row">
+          <div class="stat-label">Soldiers</div>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:40%"></div></div>
+          <div class="stat-num">10/25</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Vehicles</div>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:20%;"></div></div>
+          <div class="stat-num">2/10</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Training Prog.</div>
+          <div class="stat-bar-wrap"><div class="stat-bar" style="width:100%"></div></div>
+          <div class="stat-num">1/1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">🪖 Soldier Roster</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Designation</th><th>Status</th><th>Course</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>001</td><td>Soldier Alpha</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>002</td><td>Soldier Bravo</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>003</td><td>Soldier Charlie</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>004</td><td>Soldier Delta</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>005</td><td>Soldier Echo</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>006</td><td>Soldier Foxtrot</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>007</td><td>Soldier Golf</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>008</td><td>Soldier Hotel</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>009</td><td>Soldier India</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+            <tr><td>010</td><td>Soldier Juliet</td><td><span class="badge badge-green">Active</span></td><td><span class="badge badge-gold">CIC Certified</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PARLIAMENT ==================== -->
+<div class="page" id="page-parliament">
+  <div class="hero" style="padding: 2.5rem 1.25rem 2rem;">
+    <h1 style="font-size: clamp(1.3rem,4vw,2rem);">🏛 Parliamentary System</h1>
+    <div class="hero-sub">Government Structure & Political Composition</div>
+  </div>
+
+  <div class="content">
+    <div class="section-block">
+      <div class="section-title">⚖ Constitutional Framework</div>
+      <div class="card">
+        <div class="info-row"><span class="info-key">Government Form</span><span class="info-val">Parliamentary Commonwealth</span></div>
+        <div class="info-row"><span class="info-key">Legislative Body</span><span class="info-val">The Senate of Bramridgeton</span></div>
+        <div class="info-row"><span class="info-key">Executive Head</span><span class="info-val">President (JP John)</span></div>
+        <div class="info-row"><span class="info-key">Deputy Executive</span><span class="info-val">Vice President (KT Kahel)</span></div>
+        <div class="info-row"><span class="info-key">Total Senate Seats</span><span class="info-val">16 Seats</span></div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">🗳 Political Composition</div>
+      <div class="cards cards-3">
+        <div class="card" style="border-top: 3px solid var(--blue);">
+          <div class="card-icon">🔵</div>
+          <div class="card-label">Commonwealth Party</div>
+          <div class="card-value">10 seats</div>
+          <div class="card-desc">Dominant bloc — majority</div>
+        </div>
+        <div class="card" style="border-top: 3px solid #C0392B;">
+          <div class="card-icon">🔴</div>
+          <div class="card-label">Republic Party</div>
+          <div class="card-value">2 seats</div>
+          <div class="card-desc">Opposition — minority</div>
+        </div>
+        <div class="card" style="border-top: 3px solid #27AE60;">
+          <div class="card-icon">🟢</div>
+          <div class="card-label">Capitalist Party</div>
+          <div class="card-value">4 seats</div>
+          <div class="card-desc">Coalition partner</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">🪑 Seat Visualisation</div>
+      <div class="card">
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;">Each circle represents one parliamentary seat. Hover for party.</p>
+        <div class="seat-grid">
+          <!-- Commonwealth: 10 blue -->
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <div class="seat seat-commonwealth" title="Commonwealth Party">C</div>
+          <!-- Republic: 2 red -->
+          <div class="seat seat-republic" title="Republic Party">R</div>
+          <div class="seat seat-republic" title="Republic Party">R</div>
+          <!-- Capitalist: 4 green -->
+          <div class="seat seat-capitalist" title="Capitalist Party">K</div>
+          <div class="seat seat-capitalist" title="Capitalist Party">K</div>
+          <div class="seat seat-capitalist" title="Capitalist Party">K</div>
+          <div class="seat seat-capitalist" title="Capitalist Party">K</div>
+        </div>
+        <div class="pie-legend" style="margin-top:1rem;">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Commonwealth Party — 10 (62.5%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#27AE60"></div> Capitalist Party — 4 (25%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#C0392B"></div> Republic Party — 2 (12.5%)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">👤 Senate Members</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Title</th><th>Party</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>JP John</td>
+              <td>President</td>
+              <td><span class="badge badge-blue">Commonwealth</span></td>
+              <td>Head of State &amp; Government</td>
+            </tr>
+            <tr>
+              <td>KT Kahel</td>
+              <td>Vice President</td>
+              <td><span class="badge badge-blue">Commonwealth</span></td>
+              <td>Deputy Executive</td>
+            </tr>
+            <tr>
+              <td>Sen. Meg</td>
+              <td>Senator</td>
+              <td><span class="badge badge-blue">Commonwealth</span></td>
+              <td>Legislative Member</td>
+            </tr>
+            <tr>
+              <td>Sen. Ken</td>
+              <td>Senator</td>
+              <td><span class="badge badge-blue">Commonwealth</span></td>
+              <td>Legislative Member</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">📜 Parliamentary Procedure</div>
+      <div class="cards cards-2">
+        <div class="card">
+          <div class="card-label">Majority Threshold</div>
+          <div class="card-value">9 votes</div>
+          <div class="card-desc">Simple majority of 16 total seats</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Current Majority</div>
+          <div class="card-value">Commonwealth</div>
+          <div class="card-desc">Holds 10 of 16 seats (62.5%)</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Session Status</div>
+          <div class="card-value"><span class="badge badge-green">In Session</span></div>
+          <div class="card-desc">Parliament is currently active</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Next Vote</div>
+          <div class="card-value">TBA</div>
+          <div class="card-desc">Announced by the President's office</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== UPDATES ==================== -->
+<div class="page" id="page-updates">
+  <div class="hero" style="padding: 2.5rem 1.25rem 2rem;">
+    <h1 style="font-size: clamp(1.3rem,4vw,2rem);">📋 Official Updates</h1>
+    <div class="hero-sub">News, Decrees & Announcements</div>
+  </div>
+
+  <div class="content">
+    <div class="section-block">
+      <div class="section-title">🔔 Recent Announcements</div>
+      <div class="card">
+        <div class="update-item">
+          <div class="update-date">Nov 21, 2026</div>
+          <div class="update-content">
+            <div class="update-title">Combat Initiative Course — All Soldiers Certified <span class="badge badge-green">New</span></div>
+            <div class="update-body">All 10 members of the Bramridgeton standing army have successfully completed the Combat Initiative Course. Certification is now on record with the Assembly.</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-date">Nov 21, 2026</div>
+          <div class="update-content">
+            <div class="update-title">Transport Fleet Operational <span class="badge badge-blue">Logistics</span></div>
+            <div class="update-body">Both transport vehicles of the Bramridgeton Assembly have been declared operational. Vehicle registration and assignment records are being maintained by the Assembly Secretariat.</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-date">Nov 20, 2026</div>
+          <div class="update-content">
+            <div class="update-title">Parliamentary Session Convened <span class="badge badge-gold">Parliament</span></div>
+            <div class="update-body">President JP John has convened a parliamentary session. Sen. Meg and Sen. Ken are in attendance. The Senate is operating at current confirmed membership.</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-date">Nov 18, 2026</div>
+          <div class="update-content">
+            <div class="update-title">Government Portal Launched</div>
+            <div class="update-body">The official Commonwealth of Bramridgeton government portal is now live. Citizens may refer to this portal for all official news, assembly records, and parliamentary proceedings.</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-date">Nov 15, 2026</div>
+          <div class="update-content">
+            <div class="update-title">VP KT Kahel Confirmed <span class="badge badge-blue">Executive</span></div>
+            <div class="update-body">Kahel (KT) has been officially confirmed as the Vice President of the Commonwealth of Bramridgeton following a parliamentary vote of confidence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">📌 Pinned Decrees</div>
+      <div class="announcement">
+        <div class="announcement-icon">📜</div>
+        <div class="announcement-text"><strong>Decree №001</strong>The Bramridgeton Assembly shall maintain a standing force of no fewer than 10 soldiers, with mandatory Combat Initiative Course certification for all personnel.</div>
+      </div>
+      <div class="announcement">
+        <div class="announcement-icon">📜</div>
+        <div class="announcement-text"><strong>Decree №002</strong>The Parliamentary system of Bramridgeton operates under a Commonwealth framework. The President serves as Head of State and Government, with the Senate as the legislative authority.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>Commonwealth of Bramridgeton</strong> &nbsp;·&nbsp; Official Government Portal &nbsp;·&nbsp; All rights reserved &nbsp;·&nbsp; 2026
+</footer>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // Close mobile menu on outside click
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('mobileMenu');
+    const hamburger = document.querySelector('.nav-hamburger');
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !hamburger.contains(e.target)) {
+      menu.classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>
